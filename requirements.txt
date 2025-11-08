@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+sqlalchemy[asyncio]
+asyncpg
+python-dotenv
+pydantic-settings
+beautifulsoup4
+sentence-transformers
+httpx
+python-jose
+requests
