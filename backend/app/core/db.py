@@ -14,15 +14,15 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL is not set in .env")
 
-# ✅ Ensure async driver
+# Ensure async driver
 if DATABASE_URL.startswith("postgresql://"):
     DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
 
-# ✅ Add parameters directly to URL — global safe fix
+# Add parameters directly to URL — global safe fix
 if "statement_cache_size" not in DATABASE_URL:
     DATABASE_URL += "?statement_cache_size=0&prepared_statement_cache_size=0"
 
-# ✅ Create engine with pooling options safe for PgBouncer
+# Create engine with pooling options safe for PgBouncer
 engine = create_async_engine(
     DATABASE_URL,
     echo=False,
@@ -42,11 +42,10 @@ async def get_db():
         yield session
 
 
-# ✅ Helper for scripts like create_tables.py
+# Helper for scripts like create_tables.py
 async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     await engine.dispose()
 
 
-#PgBouncer in transaction mode", take 2 mins and lets understand this, what is that, why is this and everything about this."
