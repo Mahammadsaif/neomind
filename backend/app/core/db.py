@@ -1,5 +1,6 @@
+# backend/app/core/db.py
 import os
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
 
@@ -10,23 +11,25 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL is not set in .env")
 
-# Ensure async driver prefix
-if DATABASE_URL.startswith("postgresql://"):
-    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")
+# Remove any async prefix just in case
+if DATABASE_URL.startswith("postgresql+asyncpg://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql+asyncpg://", "postgresql://")
 
-# Create async engine (no PgBouncer tricks needed)
-engine = create_async_engine(
+# Create normal sync engine (PgBouncer safe)
+engine = create_engine(
     DATABASE_URL,
     echo=False,
-    future=True,
-    pool_pre_ping=True
+    pool_pre_ping=True,
+    future=True
 )
 
-# Session factory
-async_session = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-# Dependency for FastAPI
-async def get_db():
-    async with async_session() as session:
-        yield session
+# FastAPI dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

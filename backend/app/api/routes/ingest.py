@@ -1,6 +1,5 @@
-# backend/app/api/routes/ingest.py
 from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 from app.core.db import get_db
 from app.services.text_ingestion import extract_text_from_url, chunk_text
 from app.services.embedding_service import generate_embeddings
@@ -11,11 +10,7 @@ import uuid
 router = APIRouter()
 
 @router.post("/ingest/article")
-async def ingest_article(
-    url: str,
-    user_id: str,
-    db: AsyncSession = Depends(get_db)
-):
+def ingest_article(url: str, user_id: str, db: Session = Depends(get_db)):
     try:
         text = extract_text_from_url(url)
         if not text:
@@ -24,7 +19,7 @@ async def ingest_article(
         chunks = chunk_text(text)
         vectors = generate_embeddings(chunks)
 
-        # create content entry
+        # Create content entry
         new_content = Content(
             id=uuid.uuid4(),
             user_id=user_id,
@@ -36,9 +31,9 @@ async def ingest_article(
             processing_status="processed",
         )
         db.add(new_content)
-        await db.commit()
+        db.commit()
 
-        # insert embeddings
+        # Save embeddings
         for chunk, vector in zip(chunks, vectors):
             emb = Embedding(
                 content_id=new_content.id,
@@ -47,8 +42,9 @@ async def ingest_article(
             )
             db.add(emb)
 
-        await db.commit()
+        db.commit()
         return {"content_id": str(new_content.id), "chunks": len(chunks)}
 
     except Exception as e:
+        db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
