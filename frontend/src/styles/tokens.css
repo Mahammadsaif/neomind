@@ -1,0 +1,30 @@
+:root {
+  /* COLOR SYSTEM — NeoMind Dark (Raycast / Linear inspired) */
+  --color-bg: 15 15 17;          /* Main app background */
+  --color-surface: 25 25 30;     /* Panels / cards */
+  --color-surface-2: 32 32 38;   /* Sidebar / deep layers */
+  --color-border: 50 50 55;      /* Soft borders */
+
+  --color-text: 235 235 240;     /* Primary text */
+  --color-muted: 130 130 145;    /* Secondary text */
+  --color-subtle: 100 100 115;   /* Even softer labels */
+
+  --color-primary: 108 114 255;  /* Indigo-light */
+  --color-primary-hover: 140 145 255;
+
+  --color-accent: 56 189 248;    /* Cyan */
+  --color-danger: 255 81 81;
+
+  /* GLASS — Raycast-style */
+  --glass-bg: rgba(20, 20, 25, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  /* RADII */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  /* TYPOGRAPHY */
+  --font-sans: ui-sans-serif, Inter, system-ui, -apple-system, BlinkMacSystemFont;
+}
