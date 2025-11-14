@@ -1,6 +1,8 @@
 // src/components/sidebar/Sidebar.tsx
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   SquaresFour,
   ChatCircleDots,
@@ -16,10 +18,12 @@ export default function Sidebar({
   open: boolean;
   setOpen: (v: boolean) => void;
 }) {
+  const pathname = usePathname();
+
   const items = [
-    { label: "Chat", icon: ChatCircleDots },
-    { label: "Memory", icon: BracketsCurly },
-    { label: "Settings", icon: GearSix },
+    { label: "Chat", icon: ChatCircleDots, href: "/chat" },
+    { label: "Memory", icon: BracketsCurly, href: "/memory" },
+    { label: "Settings", icon: GearSix, href: "/settings" },
   ];
 
   return (
@@ -34,7 +38,7 @@ export default function Sidebar({
           ${open ? "opacity-0 pointer-events-none" : "opacity-100"}
         `}
       >
-        {/* Toggle button */}
+        {/* Toggle */}
         <button
           onClick={() => setOpen(true)}
           className="p-2 rounded-md text-muted hover:text-white hover:bg-white/5 transition"
@@ -43,23 +47,24 @@ export default function Sidebar({
           <SquaresFour size={26} weight="duotone" />
         </button>
 
-        {/* NAV ICONS (mini) */}
+        {/* NAV ICONS */}
         <nav className="mt-12 flex flex-col gap-10">
           {items.map((item, idx) => {
             const Icon = item.icon;
+            const active = pathname === item.href;
+
             return (
-              <button
+              <Link
                 key={idx}
-                className="
-                  p-2 rounded-md text-muted 
-                  hover:text-white hover:bg-white/5
-                  transition transform-gpu hover:scale-105
-                "
-                aria-label={item.label}
+                href={item.href}
+                className={`
+                  p-2 rounded-md transition transform-gpu hover:scale-105
+                  ${active ? "text-white bg-white/10" : "text-muted hover:text-white hover:bg-white/5"}
+                `}
                 title={item.label}
               >
                 <Icon size={22} weight="duotone" />
-              </button>
+              </Link>
             );
           })}
         </nav>
@@ -70,8 +75,7 @@ export default function Sidebar({
         <button
           className="
             mb-5 p-2 rounded-full text-muted 
-            hover:text-white hover:bg-white/5 
-            transition
+            hover:text-white hover:bg-white/5 transition
           "
           aria-label="Account"
         >
@@ -82,22 +86,17 @@ export default function Sidebar({
       {/* FULL SIDEBAR */}
       <aside
         className={`
-          fixed left-0 top-0 h-full w-[200px]   /* REDUCED WIDTH */
+          fixed left-0 top-0 h-full w-[200px]
           z-50 glass bg-surface border-r border-token
           p-5 pt-8 flex flex-col
           transition-transform duration-300 ease-out
           ${open ? "translate-x-0" : "-translate-x-full"}
         `}
       >
-        {/* Close X */}
+        {/* Close */}
         <button
           onClick={() => setOpen(false)}
-          className="
-            absolute right-3 top-3 
-            p-2 rounded-md text-muted 
-            hover:text-white hover:bg-white/5 
-            transition
-          "
+          className="absolute right-3 top-3 p-2 rounded-md text-muted hover:text-white hover:bg-white/5 transition"
           aria-label="Close sidebar"
         >
           ✕
@@ -110,23 +109,26 @@ export default function Sidebar({
           </h1>
         </div>
 
-        {/* Navigation */}
+        {/* NAVIGATION */}
         <nav className="flex flex-col gap-6 mt-4">
           {items.map((item, idx) => {
             const Icon = item.icon;
+            const active = pathname === item.href;
+
             return (
-              <button
+              <Link
                 key={idx}
-                className="
-                  flex items-center gap-3 px-3 py-2 
-                  rounded-md text-muted
-                  hover:text-white hover:bg-white/5
-                  transition transform-gpu hover:scale-[1.02]
-                "
+                href={item.href}
+                className={`
+                  flex items-center gap-3 px-3 py-2 rounded-md transition
+                  ${active 
+                    ? "bg-white/10 text-white" 
+                    : "text-muted hover:text-white hover:bg-white/5"}
+                `}
               >
                 <Icon size={20} weight="duotone" />
                 <span className="text-sm">{item.label}</span>
-              </button>
+              </Link>
             );
           })}
         </nav>
@@ -148,3 +150,5 @@ export default function Sidebar({
     </>
   );
 }
+
+"""/Users/saifshaik/Documents/neomind/frontend/src/components/sidebar/Sidebar.tsx"""
